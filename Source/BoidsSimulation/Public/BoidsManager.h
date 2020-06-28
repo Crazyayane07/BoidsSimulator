@@ -33,7 +33,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Simulation")
 	float BoidPerception;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
+	float AllignMultiplayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
+	float CohesionMultiplayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
+	float SeparationMultiplayer;
+
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Boids")
+	FVector GetCenter();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Boids")
+	float GetX();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Boids")
+	float GetY();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Boids")
+	float GetZ();
 };

@@ -22,16 +22,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	FVector Acceleration;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MaxForce = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MaxSpeed = 4;
+
 	void SetUp(float NewPerception);
 
 	void UpdateMovement();
 
-	void Flock(const TArray<ABoid*> Boids);
+	void Flock(const TArray<ABoid*> Boids, float AllignMultiplayer, float CohesionMultiplayer, float SeparationMultiplayer);
+
+	void KeepInBoundaries(float X, float Y, float Z, FVector Center);
 
 protected:
 	virtual void BeginPlay() override;
 
 	float Perception;
-
+	
 	FVector GetAlignVector(const TArray<ABoid*> Boids);
+
+	FVector GetCohesionVector(const TArray<ABoid*> Boids);
+	
+	FVector GetSeparationVector(const TArray<ABoid*> Boids);
 };

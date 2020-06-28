@@ -28,8 +28,10 @@ void ABoidsManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	for (int i = 0; i < Boids.Num(); i++) {
-		Boids[i]->Flock(Boids);
+	for (int i = 0; i < Boids.Num(); i++)
+	{
+		Boids[i]->KeepInBoundaries(GetX(), GetY(), GetZ(), GetCenter());
+		Boids[i]->Flock(Boids, AllignMultiplayer, CohesionMultiplayer, SeparationMultiplayer);
 		Boids[i]->UpdateMovement();
 	}
 }
