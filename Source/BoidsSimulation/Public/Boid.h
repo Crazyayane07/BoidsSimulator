@@ -46,4 +46,7 @@ protected:
 	FVector GetCohesionVector(const TArray<ABoid*> Boids);
 	
 	FVector GetSeparationVector(const TArray<ABoid*> Boids);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
+	void Accelerate();
 };

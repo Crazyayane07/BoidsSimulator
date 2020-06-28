@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
 	float SeparationMultiplayer;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Boids")
+	void OnFinishedSpawningBoids();
+
 protected:
 	virtual void BeginPlay() override;
 

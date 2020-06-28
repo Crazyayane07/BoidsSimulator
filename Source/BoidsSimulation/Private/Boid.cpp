@@ -135,7 +135,7 @@ void ABoid::SetUp(float NewPerception)
 void ABoid::UpdateMovement()
 {
 	SetActorLocation(GetActorLocation() + Velocity);
-	Velocity = Velocity + Acceleration;
+	Accelerate();
 
 	if (Velocity.Size() > MaxSpeed) // ?!??!?!?
 	{

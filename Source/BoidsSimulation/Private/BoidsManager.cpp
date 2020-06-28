@@ -22,6 +22,8 @@ void ABoidsManager::BeginPlay()
 
 		Boids.Add(NewBoid);
 	}
+
+	OnFinishedSpawningBoids();
 }
 
 void ABoidsManager::Tick(float DeltaTime)
