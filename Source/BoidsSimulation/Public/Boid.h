@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Boid.generated.h"
 
+class AObstacle;
+
 UCLASS()
 class BOIDSSIMULATION_API ABoid : public AActor
 {
@@ -28,11 +30,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MaxSpeed = 4;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MinDotProduct = 0.6;
+
 	void SetUp(float NewPerception);
 
 	void UpdateMovement();
 
-	void Flock(const TArray<ABoid*> Boids, float AllignMultiplayer, float CohesionMultiplayer, float SeparationMultiplayer);
+	void Flock(const TArray<ABoid*> Boids, const TArray<AObstacle*> Obstacles, float AllignMultiplayer, float CohesionMultiplayer, float SeparationMultiplayer);
 
 	void KeepInBoundaries(float X, float Y, float Z, FVector Center);
 
@@ -46,6 +51,8 @@ protected:
 	FVector GetCohesionVector(const TArray<ABoid*> Boids);
 	
 	FVector GetSeparationVector(const TArray<ABoid*> Boids);
+
+	FVector GetSeparationVectorForObstacles(const TArray<AObstacle*> Obstacles);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void Accelerate();

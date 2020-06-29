@@ -32,8 +32,7 @@ void ABoidsManager::Tick(float DeltaTime)
 
 	for (int i = 0; i < Boids.Num(); i++)
 	{
-		Boids[i]->KeepInBoundaries(GetX(), GetY(), GetZ(), GetCenter());
-		Boids[i]->Flock(Boids, AllignMultiplayer, CohesionMultiplayer, SeparationMultiplayer);
+		Boids[i]->Flock(Boids, Obstacles, AllignMultiplayer, CohesionMultiplayer, SeparationMultiplayer);
 		Boids[i]->UpdateMovement();
 	}
 }

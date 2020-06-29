@@ -7,6 +7,7 @@
 #include "BoidsManager.generated.h"
 
 class ABoid;
+class AObstacle;
 
 UCLASS()
 class BOIDSSIMULATION_API ABoidsManager : public AActor
@@ -23,6 +24,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
 	TArray<ABoid*> Boids;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
+	TArray<AObstacle*> Obstacles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
 	TSubclassOf<class ABoid> BoidClassToSpawn;

@@ -2,6 +2,7 @@
 
 
 #include "Boid.h"
+#include "Obstacle.h"
 #include "..\Public\Boid.h"
 
 ABoid::ABoid()
@@ -33,19 +34,10 @@ FVector ABoid::GetAlignVector(const TArray<ABoid*> Boids)
 	}
 
 	AvgVector = AvgVector / total;
-
-	AvgVector = AvgVector * MaxSpeed; // ?!?!?!?
-
+	AvgVector.Normalize();
+	AvgVector = AvgVector * MaxSpeed;
 	AvgVector = AvgVector - Velocity;
-
-	if (AvgVector.Size() > MaxForce) // ?!?!?!?
-	{
-		AvgVector.Normalize();
-		if (Acceleration.IsNormalized())
-		{
-			AvgVector = AvgVector * MaxForce;
-		}
-	}
+	AvgVector.Normalize();
 
 	return AvgVector;
 }
@@ -59,9 +51,16 @@ FVector ABoid::GetCohesionVector(const TArray<ABoid*> Boids)
 
 	for (int i = 0; i < Boids.Num(); i++)
 	{
-		float dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
+		float Dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
 
-		if (Boids[i] != this && dist < Perception)
+		FVector NormalizedVelocity = Velocity;
+		NormalizedVelocity.Normalize();
+		FVector NormalizeDistVector = Boids[i]->GetActorLocation() - GetActorLocation();
+		NormalizeDistVector.Normalize();
+
+		float DotProduct = FVector::DotProduct(NormalizedVelocity, NormalizeDistVector);
+
+		if (Boids[i] != this && Dist < Perception && DotProduct > MinDotProduct)
 		{
 			AvgVector = AvgVector + Boids[i]->GetActorLocation();
 			total++;
@@ -70,17 +69,10 @@ FVector ABoid::GetCohesionVector(const TArray<ABoid*> Boids)
 
 	AvgVector = AvgVector / total;
 	AvgVector = AvgVector - GetActorLocation();
-	AvgVector = AvgVector * MaxSpeed; // ?!?!?!?
+	AvgVector.Normalize();
+	AvgVector = AvgVector * MaxSpeed;
 	AvgVector = AvgVector - Velocity;
-
-	if (AvgVector.Size() > MaxForce) // ?!??!?!?
-	{
-		AvgVector.Normalize();
-		if (Acceleration.IsNormalized())
-		{
-			AvgVector = AvgVector * MaxForce;
-		}
-	}
+	AvgVector.Normalize();
 
 	return AvgVector;
 }
@@ -107,18 +99,39 @@ FVector ABoid::GetSeparationVector(const TArray<ABoid*> Boids)
 	}
 
 	AvgVector = AvgVector / total;
-	AvgVector = AvgVector * MaxSpeed; // ?!?!?!?
+	AvgVector.Normalize();
+	AvgVector = AvgVector * MaxSpeed;
 	AvgVector = AvgVector - Velocity;
+	AvgVector.Normalize();
 
-	if (AvgVector.Size() > MaxForce) // ?!??!?!?
+	return AvgVector;
+}
+
+FVector ABoid::GetSeparationVectorForObstacles(const TArray<AObstacle*> Obstacles)
+{
+	FVector AvgVector = FVector(0, 0, 0);
+	int total = 0;
+
+	for (int i = 0; i < Obstacles.Num(); i++)
 	{
-		AvgVector.Normalize();
-		if (Acceleration.IsNormalized())
+		float dist = FVector::Dist(GetActorLocation(), Obstacles[i]->GetActorLocation());
+
+		if (dist < 10000)
 		{
-			AvgVector = AvgVector * MaxForce;
+			FVector DiffVector = GetActorLocation() - Obstacles[i]->GetActorLocation();
+			DiffVector = DiffVector / dist;
+
+			AvgVector = AvgVector + DiffVector;
+			total++;
 		}
 	}
 
+	AvgVector = AvgVector / total;
+	AvgVector.Normalize();
+	AvgVector = AvgVector * MaxSpeed;
+	AvgVector = AvgVector - Velocity;
+	AvgVector.Normalize();
+	
 	return AvgVector;
 }
 
@@ -137,7 +150,7 @@ void ABoid::UpdateMovement()
 	SetActorLocation(GetActorLocation() + Velocity);
 	Accelerate();
 
-	if (Velocity.Size() > MaxSpeed) // ?!??!?!?
+	if (Velocity.Size() > MaxSpeed)
 	{
 		Velocity.Normalize();
 		if (Velocity.IsNormalized())
@@ -149,14 +162,15 @@ void ABoid::UpdateMovement()
 	Acceleration = FVector(0, 0, 0);
 }
 
-void ABoid::Flock(const TArray<ABoid*> Boids, float AllignMultiplayer, float CohesionMultiplayer, float SeparationMultiplayer)
+void ABoid::Flock(const TArray<ABoid*> Boids, const TArray<AObstacle*> Obstacles, const float AllignMultiplayer, const float CohesionMultiplayer, const float SeparationMultiplayer)
 {
 	Acceleration = Acceleration + (AllignMultiplayer * GetAlignVector(Boids));
 	Acceleration = Acceleration + (CohesionMultiplayer * GetCohesionVector(Boids));
 	Acceleration = Acceleration + (SeparationMultiplayer * GetSeparationVector(Boids));
+	Acceleration = Acceleration + (100 * GetSeparationVectorForObstacles(Obstacles));
 }
 
-void ABoid::KeepInBoundaries(float X, float Y, float Z, FVector Center)
+void ABoid::KeepInBoundaries(const float X, const float Y, const float Z, const FVector Center)
 {
 	if (GetActorLocation().X > X) {
 		SetActorLocation(Center);
