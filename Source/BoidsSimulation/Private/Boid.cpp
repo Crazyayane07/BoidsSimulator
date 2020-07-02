@@ -53,14 +53,14 @@ FVector ABoid::GetCohesionVector(const TArray<ABoid*> Boids)
 	{
 		float Dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
 
-		FVector NormalizedVelocity = Velocity;
-		NormalizedVelocity.Normalize();
-		FVector NormalizeDistVector = Boids[i]->GetActorLocation() - GetActorLocation();
-		NormalizeDistVector.Normalize();
+		//FVector NormalizedVelocity = Velocity;
+		//NormalizedVelocity.Normalize();
+		//FVector NormalizeDistVector = Boids[i]->GetActorLocation() - GetActorLocation();
+		//NormalizeDistVector.Normalize();
 
-		float DotProduct = FVector::DotProduct(NormalizedVelocity, NormalizeDistVector);
+		//float DotProduct = FVector::DotProduct(NormalizedVelocity, NormalizeDistVector);
 
-		if (Boids[i] != this && Dist < Perception && DotProduct > MinDotProduct)
+		if (Boids[i] != this && Dist < Perception)// && DotProduct > MinDotProduct)
 		{
 			AvgVector = AvgVector + Boids[i]->GetActorLocation();
 			total++;
@@ -116,7 +116,7 @@ FVector ABoid::GetSeparationVectorForObstacles(const TArray<AObstacle*> Obstacle
 	{
 		float dist = FVector::Dist(GetActorLocation(), Obstacles[i]->GetActorLocation());
 
-		if (dist < 10000)
+		if (dist < Perception)
 		{
 			FVector DiffVector = GetActorLocation() - Obstacles[i]->GetActorLocation();
 			DiffVector = DiffVector / dist;
@@ -167,7 +167,7 @@ void ABoid::Flock(const TArray<ABoid*> Boids, const TArray<AObstacle*> Obstacles
 	Acceleration = Acceleration + (AllignMultiplayer * GetAlignVector(Boids));
 	Acceleration = Acceleration + (CohesionMultiplayer * GetCohesionVector(Boids));
 	Acceleration = Acceleration + (SeparationMultiplayer * GetSeparationVector(Boids));
-	Acceleration = Acceleration + (100 * GetSeparationVectorForObstacles(Obstacles));
+	//Acceleration = Acceleration + (SeparationMultiplayer * GetSeparationVectorForObstacles(Obstacles));
 }
 
 void ABoid::KeepInBoundaries(const float X, const float Y, const float Z, const FVector Center)
