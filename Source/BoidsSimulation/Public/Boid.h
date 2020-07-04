@@ -33,26 +33,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MinDotProduct = 0.6;
 
-	void SetUp(float NewPerception);
+	void SetUp(const float &NewPerception);
 
 	void UpdateMovement();
 
-	void Flock(const TArray<ABoid*> Boids, const TArray<AObstacle*> Obstacles, float AllignMultiplayer, float CohesionMultiplayer, float SeparationMultiplayer);
+	void Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacles,const float &AllignMultiplayer,const float &CohesionMultiplayer,const float &SeparationMultiplayer);
 
-	void KeepInBoundaries(float X, float Y, float Z, FVector Center);
+	void KeepInBoundaries(const float &X,const float &Y,const float &Z,const FVector &Center);
 
 protected:
 	virtual void BeginPlay() override;
 
 	float Perception;
 	
-	FVector GetAlignVector(const TArray<ABoid*> Boids);
+	FVector GetAlignVector(const TArray<ABoid*> &Boids);
 
-	FVector GetCohesionVector(const TArray<ABoid*> Boids);
+	FVector GetCohesionVector(const TArray<ABoid*> &Boids);
 	
-	FVector GetSeparationVector(const TArray<ABoid*> Boids);
+	FVector GetSeparationVector(const TArray<ABoid*> &Boids);
 
-	FVector GetSeparationVectorForObstacles(const TArray<AObstacle*> Obstacles);
+	FVector GetSeparationVectorForObstacles(const TArray<AObstacle*> &Obstacles);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void Accelerate();
