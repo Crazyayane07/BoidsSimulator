@@ -31,7 +31,7 @@ public:
 	float MaxSpeed = 4;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float MinDotProduct = 0.6;
+	float MinDotProduct = 0.3f;
 
 	void SetUp(const float &NewPerception);
 
@@ -56,4 +56,7 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void Accelerate();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
+	void DebugDraw(const FVector &AllignVector, const FVector &CohensionVector, const FVector &SeparationVector, const FVector &SeparationObstacleVector);
 };

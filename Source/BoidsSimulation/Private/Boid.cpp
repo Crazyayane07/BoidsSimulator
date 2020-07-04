@@ -33,7 +33,8 @@ FVector ABoid::GetAlignVector(const TArray<ABoid*> &Boids)
 		}
 	}
 
-	//NIE DZIEL PRZEZ ZERO!
+	if (total <= 0) return AvgVector;
+
 	AvgVector = AvgVector / total;
 	AvgVector.Normalize();
 	AvgVector = AvgVector * MaxSpeed;
@@ -54,12 +55,12 @@ FVector ABoid::GetCohesionVector(const TArray<ABoid*> &Boids)
 	{
 		float Dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
 
-		//FVector NormalizedVelocity = Velocity;
-		//NormalizedVelocity.Normalize();
-		//FVector NormalizeDistVector = Boids[i]->GetActorLocation() - GetActorLocation();
-		//NormalizeDistVector.Normalize();
+		FVector NormalizedVelocity = Velocity;
+		NormalizedVelocity.Normalize();
+		FVector NormalizeDistVector = Boids[i]->GetActorLocation() - GetActorLocation();
+		NormalizeDistVector.Normalize();
 
-		//float DotProduct = FVector::DotProduct(NormalizedVelocity, NormalizeDistVector);
+		float DotProduct = FVector::DotProduct(NormalizedVelocity, NormalizeDistVector);
 
 		if (Boids[i] != this && Dist < Perception)// && DotProduct > MinDotProduct)
 		{
@@ -67,6 +68,8 @@ FVector ABoid::GetCohesionVector(const TArray<ABoid*> &Boids)
 			total++;
 		}
 	}
+
+	if (total <= 0) return AvgVector;
 
 	AvgVector = AvgVector / total;
 	AvgVector = AvgVector - GetActorLocation();
@@ -99,6 +102,8 @@ FVector ABoid::GetSeparationVector(const TArray<ABoid*> &Boids)
 		}
 	}
 
+	if (total <= 0) return AvgVector;
+
 	AvgVector = AvgVector / total;
 	AvgVector.Normalize();
 	AvgVector = AvgVector * MaxSpeed;
@@ -117,7 +122,7 @@ FVector ABoid::GetSeparationVectorForObstacles(const TArray<AObstacle*> &Obstacl
 	{
 		float dist = FVector::Dist(GetActorLocation(), Obstacles[i]->GetActorLocation());
 
-		if (dist < Perception)
+		if (dist < Perception*2)
 		{
 			FVector DiffVector = GetActorLocation() - Obstacles[i]->GetActorLocation();
 			DiffVector = DiffVector / dist;
@@ -126,6 +131,8 @@ FVector ABoid::GetSeparationVectorForObstacles(const TArray<AObstacle*> &Obstacl
 			total++;
 		}
 	}
+
+	if (total <= 0) return AvgVector;
 
 	AvgVector = AvgVector / total;
 	AvgVector.Normalize();
@@ -165,10 +172,17 @@ void ABoid::UpdateMovement()
 
 void ABoid::Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacles, const float &AllignMultiplayer, const float &CohesionMultiplayer, const float &SeparationMultiplayer)
 {
-	Acceleration = Acceleration + (AllignMultiplayer * GetAlignVector(Boids));
-	Acceleration = Acceleration + (CohesionMultiplayer * GetCohesionVector(Boids));
-	Acceleration = Acceleration + (SeparationMultiplayer * GetSeparationVector(Boids));
-	//Acceleration = Acceleration + (SeparationMultiplayer * GetSeparationVectorForObstacles(Obstacles));
+	FVector AllignVector = (AllignMultiplayer * GetAlignVector(Boids));
+	FVector CohensionVector = (CohesionMultiplayer * GetCohesionVector(Boids));
+	FVector SeparationVector = (SeparationMultiplayer * GetSeparationVector(Boids));
+	FVector SeparationObstacleVector = (10 * GetSeparationVectorForObstacles(Obstacles));
+
+	Acceleration = Acceleration + SeparationObstacleVector;
+	Acceleration = Acceleration + AllignVector;
+	Acceleration = Acceleration + CohensionVector;
+	Acceleration = Acceleration + SeparationVector;
+	
+	DebugDraw(AllignVector, CohensionVector, SeparationVector, SeparationObstacleVector);
 }
 
 void ABoid::KeepInBoundaries(const float &X, const float &Y, const float &Z, const FVector &Center)
