@@ -55,14 +55,7 @@ FVector ABoid::GetCohesionVector(const TArray<ABoid*> &Boids)
 	{
 		float Dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
 
-		FVector NormalizedVelocity = Velocity;
-		NormalizedVelocity.Normalize();
-		FVector NormalizeDistVector = Boids[i]->GetActorLocation() - GetActorLocation();
-		NormalizeDistVector.Normalize();
-
-		float DotProduct = FVector::DotProduct(NormalizedVelocity, NormalizeDistVector);
-
-		if (Boids[i] != this && Dist < Perception)// && DotProduct > MinDotProduct)
+		if (Boids[i] != this && Dist < Perception)
 		{
 			AvgVector = AvgVector + Boids[i]->GetActorLocation();
 			total++;
@@ -185,6 +178,7 @@ void ABoid::Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacl
 	DebugDraw(AllignVector, CohensionVector, SeparationVector, SeparationObstacleVector);
 }
 
+//old before obstacles
 void ABoid::KeepInBoundaries(const float &X, const float &Y, const float &Z, const FVector &Center)
 {
 	if (GetActorLocation().X > X) {

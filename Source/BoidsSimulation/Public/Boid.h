@@ -25,9 +25,6 @@ public:
 	FVector Acceleration;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float MaxForce = 1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MaxSpeed = 4;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
@@ -54,6 +51,7 @@ protected:
 
 	FVector GetSeparationVectorForObstacles(const TArray<AObstacle*> &Obstacles);
 
+	//only adds acceleration to velocity
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void Accelerate();
 
