@@ -27,21 +27,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MaxSpeed = 4;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float MinDotProduct = 0.3f;
-
-	void SetUp(const float &NewPerception);
+	void SetUp(const float &NewAllignPerception, const float &NewCohesionPerception, const float &NewSeparationPerception, const float &NewObstaclePerception);
 
 	void UpdateMovement();
 
-	void Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacles,const float &AllignMultiplayer,const float &CohesionMultiplayer,const float &SeparationMultiplayer);
+	void Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacles,const float &AllignMultiplayer,const float &CohesionMultiplayer,const float &SeparationMultiplayer, const float &ObstacleSeparationMultiplayer);
 
 	void KeepInBoundaries(const float &X,const float &Y,const float &Z,const FVector &Center);
 
 protected:
 	virtual void BeginPlay() override;
 
-	float Perception;
+	float AllignPerception;
+
+	float CohesionPerception;
+
+	float SeparationPerception;
+
+	float ObstaclePerception;
 	
 	FVector GetAlignVector(const TArray<ABoid*> &Boids);
 

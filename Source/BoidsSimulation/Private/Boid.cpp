@@ -26,7 +26,7 @@ FVector ABoid::GetAlignVector(const TArray<ABoid*> &Boids)
 	{
 		float dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
 		
-		if (Boids[i] != this && dist < Perception)
+		if (Boids[i] != this && dist < AllignPerception)
 		{
 			AvgVector = AvgVector + Boids[i]->Velocity;
 			total++;
@@ -55,7 +55,7 @@ FVector ABoid::GetCohesionVector(const TArray<ABoid*> &Boids)
 	{
 		float Dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
 
-		if (Boids[i] != this && Dist < Perception)
+		if (Boids[i] != this && Dist < CohesionPerception)
 		{
 			AvgVector = AvgVector + Boids[i]->GetActorLocation();
 			total++;
@@ -85,7 +85,7 @@ FVector ABoid::GetSeparationVector(const TArray<ABoid*> &Boids)
 	{
 		float dist = FVector::Dist(GetActorLocation(), Boids[i]->GetActorLocation());
 
-		if (Boids[i] != this && dist < Perception)
+		if (Boids[i] != this && dist < SeparationPerception)
 		{
 			FVector DiffVector = GetActorLocation() - Boids[i]->GetActorLocation();
 			DiffVector = DiffVector / dist;
@@ -115,7 +115,7 @@ FVector ABoid::GetSeparationVectorForObstacles(const TArray<AObstacle*> &Obstacl
 	{
 		float dist = FVector::Dist(GetActorLocation(), Obstacles[i]->GetActorLocation());
 
-		if (dist < Perception*2)
+		if (dist < ObstaclePerception)
 		{
 			FVector DiffVector = GetActorLocation() - Obstacles[i]->GetActorLocation();
 			DiffVector = DiffVector / dist;
@@ -141,9 +141,12 @@ void ABoid::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABoid::SetUp(const float &NewPerception)
+void ABoid::SetUp(const float &NewAllignPerception, const float &NewCohesionPerception, const float &NewSeparationPerception, const float &NewObstaclePerception)
 {
-	Perception = NewPerception;
+	AllignPerception = NewAllignPerception;
+	CohesionPerception = NewCohesionPerception;
+	SeparationPerception = NewSeparationPerception;
+	ObstaclePerception = NewObstaclePerception;
 }
 
 void ABoid::UpdateMovement()
@@ -163,12 +166,12 @@ void ABoid::UpdateMovement()
 	Acceleration = FVector(0, 0, 0);
 }
 
-void ABoid::Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacles, const float &AllignMultiplayer, const float &CohesionMultiplayer, const float &SeparationMultiplayer)
+void ABoid::Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacles, const float &AllignMultiplayer, const float &CohesionMultiplayer, const float &SeparationMultiplayer, const float &ObstacleSeparationMultiplayer)
 {
 	FVector AllignVector = (AllignMultiplayer * GetAlignVector(Boids));
 	FVector CohensionVector = (CohesionMultiplayer * GetCohesionVector(Boids));
 	FVector SeparationVector = (SeparationMultiplayer * GetSeparationVector(Boids));
-	FVector SeparationObstacleVector = (10 * GetSeparationVectorForObstacles(Obstacles));
+	FVector SeparationObstacleVector = (ObstacleSeparationMultiplayer * GetSeparationVectorForObstacles(Obstacles));
 
 	Acceleration = Acceleration + SeparationObstacleVector;
 	Acceleration = Acceleration + AllignVector;

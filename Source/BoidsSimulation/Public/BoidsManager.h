@@ -35,19 +35,34 @@ public:
 	FVector GetSpawnPosition();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Simulation")
-	float BoidPerception;
+	float BoidAllignPerception = 400;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Simulation")
+	float BoidCohesionPerception = 400;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Simulation")
+	float BoidSeparationPerception = 300;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Simulation")
+	float BoidObstaclePerception = 800;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
-	float AllignMultiplayer;
+	float AllignMultiplayer = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
-	float CohesionMultiplayer;
+	float CohesionMultiplayer = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
-	float SeparationMultiplayer;
+	float SeparationMultiplayer = 1.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boids")
+	float ObstacleSeparationMultiplayer = 10;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Boids")
 	void OnFinishedSpawningBoids();
+
+	UFUNCTION(BlueprintCallable, Category = "Boids")
+	void ResetUpBoidsPerception(const float &NewAllignPerception, const float &NewCohesionPerception, const float &NewSeparationPerception, const float &NewObstaclePerception);
 
 protected:
 	virtual void BeginPlay() override;
