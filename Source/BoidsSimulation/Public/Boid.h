@@ -29,7 +29,7 @@ public:
 
 	void SetUp(const float &NewAllignPerception, const float &NewCohesionPerception, const float &NewSeparationPerception, const float &NewObstaclePerception);
 
-	void UpdateMovement();
+	void UpdateMovement(const float &DeltaTime);
 
 	void Flock(const TArray<ABoid*> &Boids, const TArray<AObstacle*> &Obstacles,const float &AllignMultiplayer,const float &CohesionMultiplayer,const float &SeparationMultiplayer, const float &ObstacleSeparationMultiplayer);
 
@@ -56,7 +56,7 @@ protected:
 
 	//only adds acceleration to velocity
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
-	void Accelerate();
+	void Accelerate(const float &DeltaTime);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Movement")
 	void DebugDraw(const FVector &AllignVector, const FVector &CohensionVector, const FVector &SeparationVector, const FVector &SeparationObstacleVector);

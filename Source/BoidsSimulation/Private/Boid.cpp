@@ -149,10 +149,10 @@ void ABoid::SetUp(const float &NewAllignPerception, const float &NewCohesionPerc
 	ObstaclePerception = NewObstaclePerception;
 }
 
-void ABoid::UpdateMovement()
+void ABoid::UpdateMovement(const float &DeltaTime)
 {
 	SetActorLocation(GetActorLocation() + Velocity);
-	Accelerate();
+	Accelerate(DeltaTime);
 
 	if (Velocity.Size() > MaxSpeed)
 	{
